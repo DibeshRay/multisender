@@ -1,29 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MultiSender Dapp</title>
+  <title>Multi Sender Dapp</title>
 </head>
 <body>
-  <h1>MultiSender Dapp</h1>
-  <p>Token Address: <input type="text" id="tokenAddress"></p>
-  <button id="getTokenBalance">Get Token Balance</button>
-  <p>Token Balance: <span id="tokenBalance"></span></p>
-  <p>Recipient Addresses:</p>
-  <textarea id="recipients" rows="4" cols="50"></textarea>
-  <p>Amounts (comma-separated):</p>
-  <input type="text" id="amounts">
-  <button id="sendTokens">Send Tokens</button>
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
-  <script src="app.js"></script>
+  <h1>Multi Sender Dapp</h1>
+  <p>Connect your wallet to interact with the Dapp.</p>
+  <button id="connectButton">Connect Wallet</button>
+  <hr>
+  <h3>Send ETH and Tokens</h3>
+  <label for="ethAddress">ETH Address:</label>
+  <input type="text" id="ethAddress" placeholder="0x..." /><br>
+  <label for="ethAmount">ETH Amount:</label>
+  <input type="number" id="ethAmount" placeholder="Amount in ETH" /><br>
+  <label for="tokenAddress">Token Address:</label>
+  <input type="text" id="tokenAddress" placeholder="0x..." /><br>
+  <label for="tokenAmount">Token Amount:</label>
+  <input type="number" id="tokenAmount" placeholder="Amount of Tokens" /><br>
+  <label for="recipients">Recipients:</label>
+  <textarea id="recipients" placeholder="Enter recipient addresses separated by commas"></textarea><br>
+  <button id="sendButton">Send</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
 
-const contractAddress = '0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f'; // Replace with your contract address
-const abi = [
-  // ABI of your contract
-  // [
+
+const connectButton = document.getElementById("connectButton");
+const sendButton = document.getElementById("sendButton");
+const ethAddressInput = document.getElementById("ethAddress");
+const ethAmountInput = document.getElementById("ethAmount");
+const tokenAddressInput = document.getElementById("tokenAddress");
+const tokenAmountInput = document.getElementById("tokenAmount");
+const recipientsInput = document.getElementById("recipients");
+
+let web3;
+let contractInstance;
+
+window.addEventListener("load", async () => {
+  // Modern dapp browsers...
+  if (window.ethereum) {
+    web3 = new Web3(window.ethereum);
+    try {
+      // Request account access if needed
+      await window.ethereum.enable();
+      // Contract address and ABI should be replaced with your actual contract details
+      const contractAddress = "0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f";
+      const contractABI = [
   {
     "constant": true,
     "inputs": [],
@@ -184,67 +208,243 @@ const abi = [
     "name": "Upgraded",
     "type": "event"
   }
-]
-...
-];
+]; // ABI array
 
-window.addEventListener('load', async () => {
-  // Modern dapp browsers
-  if (window.ethereum) {
-    window.web3 = new Web3(ethereum);
-    try {
-      // Request account access if needed
-      await ethereum.enable();
+      // Initialize the contract instance
+      contractInstance = new web3.eth.Contract(contractABI, contractAddress);
+
+      console.log("Web3 instance and contract initialized.");
+      updateUI(true);
     } catch (error) {
-      // User denied account access
-      console.error("User denied account access");
+      // User denied account access...
+      console.error("User denied account access.");
     }
   }
-  // Legacy dapp browsers
+  // Legacy dapp browsers...
   else if (window.web3) {
-    window.web3 = new Web3(web3.currentProvider);
+    web3 = new Web3(web3.currentProvider);
+    // Contract address and ABI should be replaced with your actual contract details
+    const contractAddress = "0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f";
+    const contractABI = [
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "proxyOwner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "version",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "upgradeTo",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "implementation",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "upgradeabilityOwner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "name": "implementation",
+        "type": "address"
+      },
+      {
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "upgradeToAndCall",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferProxyOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "ProxyOwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "Upgraded",
+    "type": "event"
   }
-  // Non-dapp browsers
+]; // ABI array
+
+    // Initialize the contract instance
+    contractInstance = new web3.eth.Contract(contractABI, contractAddress);
+
+    console.log("Web3 instance and contract initialized.");
+    updateUI(true);
+  }
+  // Non-dapp browsers...
   else {
-    console.error('Non-Ethereum browser detected. You should consider trying MetaMask!');
+    console.error("Non-Ethereum browser detected. You should consider trying MetaMask!");
   }
 });
 
-async function getTokenBalance() {
-  const tokenAddress = document.getElementById('tokenAddress').value;
-  const tokenContract = new web3.eth.Contract(abi, tokenAddress);
-  const account = web3.eth.defaultAccount;
-
-  try {
-    const balance = await tokenContract.methods.balanceOf(account).call();
-    document.getElementById('tokenBalance').textContent = balance;
-  } catch (error) {
-    console.error('Error fetching token balance:', error);
+function updateUI(isConnected) {
+  if (isConnected) {
+    connectButton.disabled = true;
+    sendButton.disabled = false;
+  } else {
+    connectButton.disabled = false;
+    sendButton.disabled = true;
   }
 }
 
-async function sendTokens() {
-  const tokenAddress = document.getElementById('tokenAddress').value;
-  const recipients = document.getElementById('recipients').value.split('\n');
-  const amounts = document.getElementById('amounts').value.split(',');
-
-  if (recipients.length !== amounts.length) {
-    console.error('Number of recipients must be equal to the number of amounts');
-    return;
+connectButton.addEventListener("click", async () => {
+  try {
+    await window.ethereum.enable();
+    web3 = new Web3(window.ethereum);
+    console.log("Web3 instance initialized.");
+    updateUI(true);
+  } catch (error) {
+    console.error("User denied account access.");
   }
+});
 
-  const tokenContract = new web3.eth.Contract(abi, tokenAddress);
-  const account = web3.eth.defaultAccount;
+sendButton.addEventListener("click", async () => {
+  const ethAddress = ethAddressInput.value.trim();
+  const ethAmount = web3.utils.toWei(ethAmountInput.value.trim(), "ether");
+  const tokenAddress = tokenAddressInput.value.trim();
+  const tokenAmount = tokenAmountInput.value.trim();
+  const recipients = recipientsInput.value.trim().split(",");
 
   try {
-    for (let i = 0; i < recipients.length; i++) {
-      await tokenContract.methods.transfer(recipients[i], amounts[i]).send({ from: account });
-    }
-    console.log('Tokens sent successfully!');
-  } catch (error) {
-    console.error('Error sending tokens:', error);
-  }
-}
+    // Send ETH
+    await web3.eth.sendTransaction({
+      to: ethAddress,
+      value: ethAmount,
+    });
 
-document.getElementById('getTokenBalance').addEventListener('click', getTokenBalance);
-document.getElementById('sendTokens').addEventListener('click', sendTokens);
+    // Send Tokens
+    const tokenContract = new web3.eth.Contract([...], tokenAddress); // Replace with actual token contract ABI
+    const data = tokenContract.methods.transfer(recipients[0], tokenAmount).encodeABI();
+    await web3.eth.sendTransaction({
+      to: tokenAddress,
+      data: data,
+    });
+
+    console.log("Transactions sent successfully!");
+  } catch (error) {
+    console.error("Error sending transactions:", error);
+  }
+});
