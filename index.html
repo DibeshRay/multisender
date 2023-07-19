@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MultiSender Dapp</title>
+</head>
+<body>
+  <h1>MultiSender Dapp</h1>
+  <p>Token Address: <input type="text" id="tokenAddress"></p>
+  <button id="getTokenBalance">Get Token Balance</button>
+  <p>Token Balance: <span id="tokenBalance"></span></p>
+  <p>Recipient Addresses:</p>
+  <textarea id="recipients" rows="4" cols="50"></textarea>
+  <p>Amounts (comma-separated):</p>
+  <input type="text" id="amounts">
+  <button id="sendTokens">Send Tokens</button>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
+const contractAddress = 'YOUR_CONTRACT_ADDRESS'; // Replace with your contract address
+const abi = [
+  // ABI of your contract
+  // ...
+];
+
+window.addEventListener('load', async () => {
+  // Modern dapp browsers
+  if (window.ethereum) {
+    window.web3 = new Web3(ethereum);
+    try {
+      // Request account access if needed
+      await ethereum.enable();
+    } catch (error) {
+      // User denied account access
+      console.error("User denied account access");
+    }
+  }
+  // Legacy dapp browsers
+  else if (window.web3) {
+    window.web3 = new Web3(web3.currentProvider);
+  }
+  // Non-dapp browsers
+  else {
+    console.error('Non-Ethereum browser detected. You should consider trying MetaMask!');
+  }
+});
+
+async function getTokenBalance() {
+  const tokenAddress = document.getElementById('tokenAddress').value;
+  const tokenContract = new web3.eth.Contract(abi, tokenAddress);
+  const account = web3.eth.defaultAccount;
+
+  try {
+    const balance = await tokenContract.methods.balanceOf(account).call();
+    document.getElementById('tokenBalance').textContent = balance;
+  } catch (error) {
+    console.error('Error fetching token balance:', error);
+  }
+}
+
+async function sendTokens() {
+  const tokenAddress = document.getElementById('tokenAddress').value;
+  const recipients = document.getElementById('recipients').value.split('\n');
+  const amounts = document.getElementById('amounts').value.split(',');
+
+  if (recipients.length !== amounts.length) {
+    console.error('Number of recipients must be equal to the number of amounts');
+    return;
+  }
+
+  const tokenContract = new web3.eth.Contract(abi, tokenAddress);
+  const account = web3.eth.defaultAccount;
+
+  try {
+    for (let i = 0; i < recipients.length; i++) {
+      await tokenContract.methods.transfer(recipients[i], amounts[i]).send({ from: account });
+    }
+    console.log('Tokens sent successfully!');
+  } catch (error) {
+    console.error('Error sending tokens:', error);
+  }
+}
+
+document.getElementById('getTokenBalance').addEventListener('click', getTokenBalance);
+document.getElementById('sendTokens').addEventListener('click', sendTokens);
