@@ -24,29 +24,28 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
   <script src="./app.js"></script>
 
+  <script>
+    const connectButton = document.getElementById("connectButton");
+    const sendButton = document.getElementById("sendButton");
+    const ethAddressInput = document.getElementById("ethAddress");
+    const ethAmountInput = document.getElementById("ethAmount");
+    const tokenAddressInput = document.getElementById("tokenAddress");
+    const tokenAmountInput = document.getElementById("tokenAmount");
+    const recipientsInput = document.getElementById("recipients");
 
+    let web3;
+    let contractInstance;
 
-const connectButton = document.getElementById("connectButton");
-const sendButton = document.getElementById("sendButton");
-const ethAddressInput = document.getElementById("ethAddress");
-const ethAmountInput = document.getElementById("ethAmount");
-const tokenAddressInput = document.getElementById("tokenAddress");
-const tokenAmountInput = document.getElementById("tokenAmount");
-const recipientsInput = document.getElementById("recipients");
-
-let web3;
-let contractInstance;
-
-window.addEventListener("load", async () => {
-  // Modern dapp browsers...
-  if (window.ethereum) {
-    web3 = new Web3(window.ethereum);
-    try {
-      // Request account access if needed
-      await window.ethereum.enable();
-      // Contract address and ABI should be replaced with your actual contract details
-      const contractAddress = "0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f";
-      const contractABI = [
+    window.addEventListener("load", async () => {
+      // Modern dapp browsers...
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+          // Request account access if needed
+          await window.ethereum.enable();
+          // Contract address and ABI should be replaced with your actual contract details
+          const contractAddress = "0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f";
+          const contractABI = [[
   {
     "constant": true,
     "inputs": [],
@@ -207,247 +206,86 @@ window.addEventListener("load", async () => {
     "name": "Upgraded",
     "type": "event"
   }
+]
 ]; // ABI array
 
-      // Initialize the contract instance
-      contractInstance = new web3.eth.Contract(contractABI, contractAddress);
+          // Initialize the contract instance
+          contractInstance = new web3.eth.Contract(contractABI, contractAddress);
 
-      console.log("Web3 instance and contract initialized.");
-      updateUI(true);
-    } catch (error) {
-      // User denied account access...
-      console.error("User denied account access.");
+          console.log("Web3 instance and contract initialized.");
+          updateUI(true);
+        } catch (error) {
+          // User denied account access...
+          console.error("User denied account access.");
+        }
+      }
+      // Legacy dapp browsers...
+      else if (window.web3) {
+        web3 = new Web3(web3.currentProvider);
+        // Contract address and ABI should be replaced with your actual contract details
+        const contractAddress = "0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f";
+        const contractABI = [/* ... */]; // ABI array
+
+        // Initialize the contract instance
+        contractInstance = new web3.eth.Contract(contractABI, contractAddress);
+
+        console.log("Web3 instance and contract initialized.");
+        updateUI(true);
+      }
+      // Non-dapp browsers...
+      else {
+        console.error("Non-Ethereum browser detected. You should consider trying MetaMask!");
+      }
+    });
+
+    function updateUI(isConnected) {
+      if (isConnected) {
+        connectButton.disabled = true;
+        sendButton.disabled = false;
+      } else {
+        connectButton.disabled = false;
+        sendButton.disabled = true;
+      }
     }
-  }
-  // Legacy dapp browsers...
-  else if (window.web3) {
-    web3 = new Web3(web3.currentProvider);
-    // Contract address and ABI should be replaced with your actual contract details
-    const contractAddress = "0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f";
-    const contractABI = [
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "proxyOwner",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "version",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "version",
-        "type": "string"
-      },
-      {
-        "name": "implementation",
-        "type": "address"
-      }
-    ],
-    "name": "upgradeTo",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "implementation",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "upgradeabilityOwner",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "version",
-        "type": "string"
-      },
-      {
-        "name": "implementation",
-        "type": "address"
-      },
-      {
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "upgradeToAndCall",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferProxyOwnership",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "fallback"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "ProxyOwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "version",
-        "type": "string"
-      },
-      {
-        "indexed": true,
-        "name": "implementation",
-        "type": "address"
-      }
-    ],
-    "name": "Upgraded",
-    "type": "event"
-  }
-]; // ABI array
 
-    // Initialize the contract instance
-    contractInstance = new web3.eth.Contract(contractABI, contractAddress);
-
-    console.log("Web3 instance and contract initialized.");
-    updateUI(true);
-  }
-  // Non-dapp browsers...
-  else {
-    console.error("Non-Ethereum browser detected. You should consider trying MetaMask!");
-  }
-});
-
-function updateUI(isConnected) {
-  if (isConnected) {
-    connectButton.disabled = true;
-    sendButton.disabled = false;
-  } else {
-    connectButton.disabled = false;
-    sendButton.disabled = true;
-  }
-}
-
-connectButton.addEventListener("click", async () => {
-  try {
-    await window.ethereum.enable();
-    web3 = new Web3(window.ethereum);
-    console.log("Web3 instance initialized.");
-    updateUI(true);
-  } catch (error) {
-    console.error("User denied account access.");
-  }
-});
-
-sendButton.addEventListener("click", async () => {
-  const ethAddress = ethAddressInput.value.trim();
-  const ethAmount = web3.utils.toWei(ethAmountInput.value.trim(), "ether");
-  const tokenAddress = tokenAddressInput.value.trim();
-  const tokenAmount = tokenAmountInput.value.trim();
-  const recipients = recipientsInput.value.trim().split(",");
-
-  try {
-    // Send ETH
-    await web3.eth.sendTransaction({
-      to: ethAddress,
-      value: ethAmount,
+    connectButton.addEventListener("click", async () => {
+      try {
+        await window.ethereum.enable();
+        web3 = new Web3(window.ethereum);
+        console.log("Web3 instance initialized.");
+        updateUI(true);
+      } catch (error) {
+        console.error("User denied account access.");
+      }
     });
 
-    // Send Tokens
-    const tokenContract = new web3.eth.Contract([...], tokenAddress); // Replace with actual token contract ABI
-    const data = tokenContract.methods.transfer(recipients[0], tokenAmount).encodeABI();
-    await web3.eth.sendTransaction({
-      to: tokenAddress,
-      data: data,
+    sendButton.addEventListener("click", async () => {
+      const ethAddress = ethAddressInput.value.trim();
+      const ethAmount = web3.utils.toWei(ethAmountInput.value.trim(), "ether");
+      const tokenAddress = tokenAddressInput.value.trim();
+      const tokenAmount = tokenAmountInput.value.trim();
+      const recipients = recipientsInput.value.trim().split(",");
+
+      try {
+        // Send ETH
+        await web3.eth.sendTransaction({
+          to: ethAddress,
+          value: ethAmount,
+        });
+
+        // Send Tokens
+        const tokenContract = new web3.eth.Contract([...], tokenAddress); // Replace with actual token contract ABI
+        const data = tokenContract.methods.transfer(recipients[0], tokenAmount).encodeABI();
+        await web3.eth.sendTransaction({
+          to: tokenAddress,
+          data: data,
+        });
+
+        console.log("Transactions sent successfully!");
+      } catch (error) {
+        console.error("Error sending transactions:", error);
+      }
     });
-
-    console.log("Transactions sent successfully!");
-  } catch (error) {
-    console.error("Error sending transactions:", error);
-  }
-});
-
   </script>
 </body>
 </html>
