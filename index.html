@@ -3,8 +3,7 @@
 <head>
   <title>Multi Sender Dapp</title>
   <style>
-    /* Your existing CSS styles... */
-     body {
+    body {
       font-family: Arial, sans-serif;
       line-height: 1.6;
       margin: 20px;
@@ -53,14 +52,10 @@
 <body>
   <h1>Multi Sender Dapp</h1>
   <p>Connect your wallet to interact with the Dapp.</p>
-  <div>
-    <button id="connectButton">Connect Wallet</button>
-    <span id="walletAddressDisplay"></span>
-  </div>
+  <button id="connectButton">Connect Wallet</button>
   <hr>
   <h3>Send ETH and Tokens</h3>
-  <!-- Your existing input fields and other elements... -->
-    <label for="ethAddress">ETH Address:</label>
+  <label for="ethAddress">ETH Address:</label>
   <input type="text" id="ethAddress" placeholder="0x..." />
   
   <label for="ethAmount">ETH Amount:</label>
@@ -77,11 +72,12 @@
   
   <br>
   <button id="sendButton">Send</button>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
   <script>
-    // Your existing JavaScript code...
-    // ...
-       const connectButton = document.getElementById("connectButton");
+    // JavaScript code remains unchanged
+  
+    const connectButton = document.getElementById("connectButton");
     const sendButton = document.getElementById("sendButton");
     const ethAddressInput = document.getElementById("ethAddress");
     const ethAmountInput = document.getElementById("ethAmount");
@@ -253,11 +249,10 @@
     "name": "Upgraded",
     "type": "event"
   }
-];
+];;
 
     window.addEventListener("load", async () => {
-      // Your existing code for loading the Web3 instance and contract...
-      // ...
+      // Modern dapp browsers...
       if (window.ethereum) {
         web3 = new Web3(window.ethereum);
         try {
@@ -265,168 +260,9 @@
           await window.ethereum.enable();
           // Contract address and ABI should be replaced with your actual contract details
           const contractAddress = "0xA5025FABA6E70B84F74e9b1113e5F7F4E7f4859f";
-          const contractABI =  [
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "proxyOwner",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "version",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "version",
-        "type": "string"
-      },
-      {
-        "name": "implementation",
-        "type": "address"
-      }
-    ],
-    "name": "upgradeTo",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "implementation",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "upgradeabilityOwner",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "version",
-        "type": "string"
-      },
-      {
-        "name": "implementation",
-        "type": "address"
-      },
-      {
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "upgradeToAndCall",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferProxyOwnership",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "fallback"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "ProxyOwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "version",
-        "type": "string"
-      },
-      {
-        "indexed": true,
-        "name": "implementation",
-        "type": "address"
-      }
-    ],
-    "name": "Upgraded",
-    "type": "event"
-  }
-];;
+          const contractABI = [
+            // Your contract ABI...
+          ];
 
           // Initialize the contract instance
           contractInstance = new web3.eth.Contract(contractABI, contractAddress);
@@ -610,26 +446,23 @@
         // Initialize the contract instance
         contractInstance = new web3.eth.Contract(contractABI, contractAddress);
 
-
-      console.log("Web3 instance and contract initialized.");
-      updateUI(true, web3.eth.defaultAccount); // Pass the connected wallet address
+        console.log("Web3 instance and contract initialized.");
+        updateUI(true);
+      }
+      // Non-dapp browsers...
+      else {
+        console.error("Non-Ethereum browser detected. You should consider trying MetaMask!");
+      }
     });
 
-    function updateUI(isConnected, walletAddress) {
-      const connectButton = document.getElementById("connectButton");
-      const walletAddressDisplay = document.getElementById("walletAddressDisplay");
-
+    function updateUI(isConnected) {
       if (isConnected) {
-        connectButton.textContent = `Connected (${walletAddress})`;
         connectButton.disabled = true;
-        walletAddressDisplay.textContent = `Connected Wallet Address: ${walletAddress}`;
+        sendButton.disabled = false;
       } else {
-        connectButton.textContent = "Connect Wallet";
         connectButton.disabled = false;
-        walletAddressDisplay.textContent = ""; // Clear the displayed address
+        sendButton.disabled = true;
       }
-
-      sendButton.disabled = !isConnected;
     }
 
     connectButton.addEventListener("click", async () => {
@@ -637,16 +470,13 @@
         await window.ethereum.enable();
         web3 = new Web3(window.ethereum);
         console.log("Web3 instance initialized.");
-        updateUI(true, web3.eth.defaultAccount); // Pass the connected wallet address
+        updateUI(true);
       } catch (error) {
         console.error("User denied account access.");
-        updateUI(false, null); // Pass null if no wallet is connected
       }
     });
 
     sendButton.addEventListener("click", async () => {
-      // Your existing code for sending ETH and Tokens...
-      // ...
       const ethAddress = ethAddressInput.value.trim();
       const ethAmount = web3.utils.toWei(ethAmountInput.value.trim(), "ether");
       const tokenAddress = tokenAddressInput.value.trim();
