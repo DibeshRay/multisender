@@ -3,6 +3,17 @@
 <head>
   <title>Multi Sender Dapp</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+      padding: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
     /* Add spacing between buttons */
     button {
       margin-right: 10px;
@@ -12,6 +23,29 @@
       padding: 10px 20px;
       cursor: pointer;
       border-radius: 5px;
+    }
+
+    hr {
+      margin: 20px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    textarea {
+      resize: vertical;
     }
   </style>
 </head>
@@ -24,35 +58,25 @@
   <label for="ethAddress">ETH Address:</label>
   <input type="text" id="ethAddress" placeholder="0x..." />
   
-  <br>
-  
   <label for="ethAmount">ETH Amount:</label>
-
-  <br>
   <input type="number" id="ethAmount" placeholder="Amount in ETH" />
   
-  <br>
   <label for="tokenAddress">Token Address:</label>
   <input type="text" id="tokenAddress" placeholder="0x..." />
   
-  <br>
   <label for="tokenAmount">Token Amount:</label>
   <input type="number" id="tokenAmount" placeholder="Amount of Tokens" />
   
-  <br>
   <label for="recipients">Recipients:</label>
   <textarea id="recipients" placeholder="Enter recipient addresses separated by commas"></textarea>
   
   <br>
-
-  
   <button id="sendButton">Send</button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
   <script>
- 
-
-  <script>
+    // JavaScript code remains unchanged
+  
     const connectButton = document.getElementById("connectButton");
     const sendButton = document.getElementById("sendButton");
     const ethAddressInput = document.getElementById("ethAddress");
@@ -64,9 +88,168 @@
     let web3;
     let contractInstance;
     // Token Contract ABI should be replaced with the actual ABI
-    const tokenContractABI = [
-      // Token contract functions and events...
-    ];
+    const tokenContractABI =  [
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "proxyOwner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "version",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "upgradeTo",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "implementation",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "upgradeabilityOwner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "name": "implementation",
+        "type": "address"
+      },
+      {
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "upgradeToAndCall",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferProxyOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "ProxyOwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "Upgraded",
+    "type": "event"
+  }
+];;
 
     window.addEventListener("load", async () => {
       // Modern dapp browsers...
